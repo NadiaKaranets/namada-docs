@@ -31,6 +31,11 @@ const config: DocsThemeConfig = {
   footer: {
     text: "Namada",
   },
+  i18n: [
+    { locale: 'en-US', text: 'English' },
+    { locale: 'uk-UA', text: 'Українська' },
+    { locale: "ru-RU", text: 'Русский' }
+  ],
 };
 
 export default config;

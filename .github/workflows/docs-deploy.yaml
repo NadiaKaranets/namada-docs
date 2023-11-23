@@ -1,0 +1,44 @@
+name: Publish namada-docs
+
+on: 
+  push:
+    paths:
+      - "packages/docs/**"
+
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    name: Publish namada-docs to Cloudflare Pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "16"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install next-on-pages
+        run: npm install -g @cloudflare/next-on-pages@1
+
+      - name: Build page community page
+        run: npm run build:docs:page
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: namada-community
+          directory: ./packages/docs/.vercel/output/static
+          # Optional: Enable this if you want to have GitHub Deployments triggered
+          gitHubToken: ${{ secrets.GH_TOKEN }}
+          wranglerVersion: '3'

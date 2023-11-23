@@ -7,8 +7,11 @@ const withNextra = require("nextra")({
 
 module.exports = {
   ...withNextra(),
-  basePath: "/community/docs",
   images: {
     unoptimized: true,
+  },
+   i18n: {
+    locales: ['en-US', 'uk-UA', 'ru-RU'],
+    defaultLocale: 'en-US'
   },
 };
