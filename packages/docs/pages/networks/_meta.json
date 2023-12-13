@@ -1,4 +1,4 @@
 {
-  "mainnets" : "Основні мережі",
-  "testnets": "Тестові мережі"
+  "mainnets" : "Mainnets",
+  "testnets": "Testnets",
 }

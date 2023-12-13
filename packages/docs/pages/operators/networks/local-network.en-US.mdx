@@ -1,0 +1,82 @@
+import Expandable from "../../../components/Expandable";
+
+# Spinning up a local network
+
+## Prerequisites
+
+Namada must be installed [from source](../../introduction/install/source.mdx) in order to run a local network.
+
+There is a script that has been written specifically for this purpose, which can be found under `MakeFile` in the root directory.
+
+### Installing script dependencies
+
+The script has some dependencies that must be installed in order to run it successfully:
+
+1. python3 must be installed.
+2. toml Python pip library https://pypi.org/project/toml/ must be installed.
+
+The script will require a set of genesis configuration files, which are TOML files that specify the parameters of the network. All of these files can be found in the `namada/genesis/localnet` directory.
+
+### Building wasm
+
+The script will also require all `wasm` files for transactions to be built. This can be done by running the following command (whilst in the namada directory):
+
+```shell
+make build-wasm-scripts
+```
+
+## Running the script
+
+The script is called `gen_localnet.py` and can be run with the following command:
+
+```shell
+# Ensure you are in the root of the namada repository directory
+python3 ./scripts/gen_localnet.py
+```
+
+The script also takes a number of positional arguments that can be supplied. These are:
+
+```text
+-h, --help            show this help message and exit
+  --localnet-dir LOCALNET_DIR
+                        The localnet directory containing the genesis templates.
+  -m MODE, --mode MODE  The mode to run the localnet in. Can be release or debug, defaults to debug.
+  --epoch-length EPOCH_LENGTH
+                        The epoch length in seconds, defaults to parameters.toml value.
+  --max-validator-slots MAX_VALIDATOR_SLOTS
+                        The maximum number of validators, defaults to parameters.toml value.
+  --params PARAMS       A string representation of a dictionary of parameters to update in the parameters.toml. Must be of the same format.
+```
+
+For example, a MacOS user would run something along the lines of:
+
+```bash
+# Assuming pwd == root of namada repository
+python3 ./scripts/gen_localnet.py \
+--localnet-dir genesis/localnet \
+--mode release # Assuming the binaries were built using `make build-release` \
+--parameters '{"parameters": {"max_expected_time_per_block": 10}, "pos_params": {"pipeline_len": "5"}}' 
+# In order to change max_expected_time_per_block to 10 seconds from the default 30, and the pipeline length to 5 epochs from the default 2.
+```
+
+### Modifying the genesis configuration file
+
+The genesis configuration can be modified in two ways. One is to change the contents of the toml file directly. The other is to use the `parameters` argument when running the script. The `parameters` argument takes a string representation of a dictionary of parameters to update in the parameters.toml. The format of the string must be the same as the format of the dictionary in the toml file.
+
+## Running the ledger
+
+After the script has been run, a python process will have started in the background.
+The ledger can be run through the familiar command:
+
+```shell
+./target/release/namada ledger # Assuming the binaries were built using `make build-release`
+```
+
+## Cleaning up
+
+After the local network has fulfilled its purpose, it can be cleaned up by running the following commands found in the cleanup function of the script:
+
+```shell copy
+    kilalll namadan
+    # delete the base_dir/chain_id directory
+```
